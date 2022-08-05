@@ -24,12 +24,12 @@ const colors = {
 };
 
 const loadPokemon = async () => {
-    const randomIds = [];
-    while(randomIds.length < 8){
-        const randomNumber = Math.floor(Math.random() * 150) + 1;
-        if(randomIds.indexOf(randomNumber) === -1) randomIds.push(randomNumber);
+    const randomIds = new Set();
+    while(randomIds.size < 8){
+        const randomNumber = Math.ceil(Math.random() * 150);
+        randomIds.add(randomNumber);
     }
-    const pokePromises = randomIds.map(id => fetch(pokeAPIBaseUrl + id))
+    const pokePromises = [...randomIds].map(id => fetch(pokeAPIBaseUrl + id))
     const results = await Promise.all(pokePromises);
     return await Promise.all(results.map(res => res.json()));
 }
@@ -43,7 +43,7 @@ const resetGame = async() => {
         const loadedPokemon = await loadPokemon();
         displayPokemon([...loadedPokemon, ...loadedPokemon]);
         isPaused = false;
-    },500)
+    },200)
 }
 
 const displayPokemon = (pokemon) => {
